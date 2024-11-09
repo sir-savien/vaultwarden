@@ -1,0 +1,29 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    volumes:
+      - ./vw-data:/data
+    environment:
+      SIGNUPS_ALLOWED: "${SIGNUPS_ALLOWED}"
+      DOMAIN: "https://vaultwarden.${HOST_DOMAIN}"
+      INVITATIONS_ALLOWED: "${INVITATIONS_ALLOWED}"
+      ADMIN_TOKEN: "${ADMIN_PWD_HASH}"
+
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80  # Needed for the ACME HTTP-01 challenge.
+      - 443:443
+      - 443:443/udp # Needed for HTTP/3.
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy-config:/config
+      - ./caddy-data:/data
+    environment:
+      DOMAIN: "https://vaultwarden.${HOST_DOMAIN}"  # Your domain.
+      EMAIL: "${ACME_MAIL}"  # The email address to use for ACME registration.
+      LOG_FILE: "/data/access.log"
