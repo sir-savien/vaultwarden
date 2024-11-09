@@ -1,1 +1,6 @@
 .env
+vw-data/*
+caddy-data/*
+caddy-config/*
+vw-logs/*
+!vw-logs/.gitkeep

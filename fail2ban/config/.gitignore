@@ -1,0 +1,5 @@
+log/*
+!log/.gitkeep
+fail2ban/*
+!fail2ban/.gitkeep
+!fail2ban/*.local

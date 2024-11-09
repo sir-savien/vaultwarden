@@ -5,11 +5,32 @@ services:
     restart: unless-stopped
     volumes:
       - ./vw-data:/data
+      - ${VW_LOG_PATH}:/logs
     environment:
       SIGNUPS_ALLOWED: "${SIGNUPS_ALLOWED}"
       DOMAIN: "https://vaultwarden.${HOST_DOMAIN}"
       INVITATIONS_ALLOWED: "${INVITATIONS_ALLOWED}"
       ADMIN_TOKEN: "${ADMIN_PWD_HASH}"
+      LOG_LEVEL: "${VW_LOG_LEVEL}"
+      LOG_FILE: "/logs/vaultwarden.log"
+      TZ: ${F2B_TZ}
+
+  fail2ban:
+    image: lscr.io/linuxserver/fail2ban:latest
+    container_name: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+    environment:
+      TZ: ${F2B_TZ}
+      PUID: 1000
+      PGID: 1000
+    volumes:
+      - ./fail2ban/config:/config
+      - /var/log:/var/log:ro
+      - ${VW_LOG_PATH}:/remotelogs/vaultwarden:ro
+    restart: unless-stopped
 
   caddy:
     image: caddy:latest
