@@ -4,3 +4,4 @@ caddy-data/*
 caddy-config/*
 vw-logs/*
 !vw-logs/.gitkeep
+.DS_Store
